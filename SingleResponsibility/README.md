@@ -4,7 +4,10 @@
 or 
 "Every classes and methons or functions should have only one and only reason to change."
 
-A bad example:
+
+### Define Scenario
+We need to Define class which named <b>Temp</b> that should get name in <i>init</i> method and <b>save</b> the Temp object into the for example <i>file,DB or ....</i> 
+#### First Implemention
 ```
 class Temp:
     def __init__(self, name: Optional[str]) -> None:
@@ -73,3 +76,48 @@ class TempPostgresSaver(TempSaver):
 1. Create new class for save <b>Temp</b> class object and give over the responsibilty of store logic on this class.
 2. Inject tho stor class on <b>initialization</b> method of Temp class after that without knowing the logic of storing data and save Temp object.
 If we want anther method for saving data or anther destination we can init new class and add logic to the <b>save</b> method.
+
+But have any better solution or not ??
+Yes we can improve our code.
+In the Temp class we have <b>save</b> method which can save data but it is valid thing based on the definition of <b>OOP</b> or not ???
+It is valid Temp classs strugle with own logic and save method ??
+No it is not we should handover the <b>save</b> method to other class.
+### Best Solution ✅✅
+```
+
+class TempSaver(ABC):
+
+    def __init__(self) -> None:
+        pass
+
+    def save(self, temp) -> None:
+        pass
+
+
+class Temp:
+    def __init__(self, name: Optional[str], temp_store: TempSaver) -> None:
+        self.name = name
+
+    def __repr__(self) -> str:
+        return f"The Temp Object ->{self.name}.."
+
+
+class TempFileSaver(TempSaver):
+
+    def __init__(self) -> None:
+        pass
+
+    def save(self, temp: Temp) -> None:
+        print(f"save data {json.dumps(str(temp))}")
+
+
+class TempPostgresSaver(TempSaver):
+
+    def save(self, temp: Temp) -> None:
+        """
+        You can now override save method based on you need and save it on Postgres Sql
+        """
+        pass
+
+```
+In this code we seperate the logic of <b>Temp</b> and <b>save</b> into the two different classes and have own responsibility.
